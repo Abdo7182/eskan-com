@@ -102,8 +102,7 @@ export const SearchFilters = ({ onSearch, initialArea }: SearchFiltersProps) => 
                     )}
                   </SelectContent>
                 </Select>
-              )}
-            </div>
+  }            </div>
 
             {/* 🔹 عدد الغرف */}
             <div className="space-y-2">
