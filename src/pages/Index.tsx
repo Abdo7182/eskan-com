@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Building2, Shield, Clock, Award } from "lucide-react";
 import { alexandriaAreas } from "@/data/properties";
 import { Link } from "react-router-dom";
-import heroBg from "@/assets/hero-bg.jpg";
+const heroBg = "/hero-bg.jpg"; // Using public folder asset
 import { fetchProperties } from "@/api";
 import { Property as PropertyType } from "@/data/properties";
 
