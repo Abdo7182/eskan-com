@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Building2, Shield, Clock, Award } from "lucide-react";
 import { alexandriaAreas } from "@/data/properties";
 import { Link } from "react-router-dom";
-const heroBg = "/hero-bg.jpg"; // Using public folder asset
+const heroBg = "/"/placeholder.svg"; // Using placeholder from public folder
 import { fetchProperties } from "@/api";
 import { Property as PropertyType } from "@/data/properties";
 
@@ -182,3 +182,4 @@ const FeatureCard = ({ icon, title, text }: { icon: React.ReactNode; title: stri
     <p className="text-sm text-muted-foreground">{text}</p>
   </div>
 );
+
