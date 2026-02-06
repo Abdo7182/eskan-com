@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -50,17 +50,21 @@ export function TransactionsTable({ transactions, onDelete, onEdit }: Transactio
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("الكل");
   const [typeFilter, setTypeFilter] = useState("الكل");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    const matchesSearch = transaction.propertyName
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesRegion =
-      regionFilter === "الكل" || transaction.region === regionFilter;
-    const matchesType =
-      typeFilter === "الكل" || transaction.propertyType === typeFilter;
-    return matchesSearch && matchesRegion && matchesType;
-  });
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((transaction) => {
+      const matchesSearch = transaction.propertyName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesRegion =
+        regionFilter === "الكل" || transaction.region === regionFilter;
+      const matchesType =
+        typeFilter === "الكل" || transaction.propertyType === typeFilter;
+      return matchesSearch && matchesRegion && matchesType;
+    });
+  }, [transactions, searchQuery, regionFilter, typeFilter]);
 
   const handleExport = () => {
     if (filteredTransactions.length === 0) {
@@ -93,9 +97,12 @@ export function TransactionsTable({ transactions, onDelete, onEdit }: Transactio
     toast.success("تم تصدير البيانات بنجاح");
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("ar-EG").format(value);
-  };
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredTransactions.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredTransactions, currentPage]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
   return (
     <div className="card-glow rounded-2xl bg-card p-5 lg:p-6 border border-border shadow-lg">
@@ -180,7 +187,7 @@ export function TransactionsTable({ transactions, onDelete, onEdit }: Transactio
                 </TableCell>
               </TableRow>
             ) : (
-              filteredTransactions.map((transaction) => (
+              paginatedTransactions.map((transaction) => (
                 <TableRow key={transaction.id} className="group">
                   <TableCell className="text-muted-foreground">
                     {new Date(transaction.date).toLocaleDateString("ar-EG")}
@@ -210,6 +217,43 @@ export function TransactionsTable({ transactions, onDelete, onEdit }: Transactio
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            السابق
+          </Button>
+
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(page)}
+                className="w-8 h-8"
+              >
+                {page}
+              </Button>
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+          >
+            التالي
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

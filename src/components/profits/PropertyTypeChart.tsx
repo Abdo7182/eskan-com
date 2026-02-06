@@ -1,3 +1,4 @@
+import React from "react";
 import {
   LineChart,
   Line,
@@ -72,7 +73,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   );
 };
 
-export function PropertyTypeChart() {
+export function PropertyTypeChartComponent() {
   const [chartType, setChartType] = useState<"line" | "bar">("line");
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -295,3 +296,5 @@ export function PropertyTypeChart() {
     </div>
   );
 }
+
+export const PropertyTypeChart = React.memo(PropertyTypeChartComponent);

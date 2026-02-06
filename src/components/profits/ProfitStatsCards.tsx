@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { TrendingUp, TrendingDown, DollarSign, Calendar, CalendarDays, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -65,74 +66,76 @@ interface ProfitStatsCardsProps {
   transactions?: Transaction[];
 }
 
-export function ProfitStatsCards({ transactions = [] }: ProfitStatsCardsProps) {
-  // حساب الإحصائيات من البيانات الفعلية
-  const totalProfit = transactions.reduce((sum, t) => sum + t.profit, 0);
-  
-  // حساب أرباح الشهر الحالي
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-  
-  const monthProfit = transactions
-    .filter((t) => {
-      const transDate = new Date(t.date);
-      return transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
-    })
-    .reduce((sum, t) => sum + t.profit, 0);
-  
-  // حساب أرباح الأسبوع الحالي
-  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const weekProfit = transactions
-    .filter((t) => new Date(t.date) >= weekAgo)
-    .reduce((sum, t) => sum + t.profit, 0);
-  
-  // حساب أرباح اليوم
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const todayProfit = transactions
-    .filter((t) => new Date(t.date) >= todayStart)
-    .reduce((sum, t) => sum + t.profit, 0);
+function ProfitStatsCardsComponent({ transactions = [] }: ProfitStatsCardsProps) {
+  const stats = useMemo(() => {
+    // حساب الإحصائيات من البيانات الفعلية
+    const totalProfit = transactions.reduce((sum, t) => sum + t.profit, 0);
+    
+    // حساب أرباح الشهر الحالي
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    const monthProfit = transactions
+      .filter((t) => {
+        const transDate = new Date(t.date);
+        return transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
+      })
+      .reduce((sum, t) => sum + t.profit, 0);
+    
+    // حساب أرباح الأسبوع الحالي
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const weekProfit = transactions
+      .filter((t) => new Date(t.date) >= weekAgo)
+      .reduce((sum, t) => sum + t.profit, 0);
+    
+    // حساب أرباح اليوم
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayProfit = transactions
+      .filter((t) => new Date(t.date) >= todayStart)
+      .reduce((sum, t) => sum + t.profit, 0);
 
-  // تحديد الأداء بناءً على الأرقام
-  const getPerformance = (value: number, threshold: number): StatCard["performance"] => {
-    if (value >= threshold * 0.8) return "excellent";
-    if (value >= threshold * 0.5) return "good";
-    if (value >= threshold * 0.2) return "warning";
-    return "poor";
-  };
+    // تحديد الأداء بناءً على الأرقام
+    const getPerformance = (value: number, threshold: number): StatCard["performance"] => {
+      if (value >= threshold * 0.8) return "excellent";
+      if (value >= threshold * 0.5) return "good";
+      if (value >= threshold * 0.2) return "warning";
+      return "poor";
+    };
 
-  const stats: StatCard[] = [
-    {
-      title: "إجمالي أرباح الموقع",
-      value: totalProfit,
-      icon: <DollarSign className="h-5 w-5" />,
-      performance: "excellent",
-      subtitle: "جميع الصفقات المسجلة",
-    },
-    {
-      title: "أرباح الشهر",
-      value: monthProfit,
-      icon: <Calendar className="h-5 w-5" />,
-      trend: monthProfit > 0 ? 12.5 : -5.2,
-      performance: getPerformance(monthProfit, 100000),
-      subtitle: "من أول الشهر حتى اليوم",
-    },
-    {
-      title: "أرباح الأسبوع",
-      value: weekProfit,
-      icon: <CalendarDays className="h-5 w-5" />,
-      trend: weekProfit > 15000 ? 8.3 : -5.2,
-      performance: getPerformance(weekProfit, 30000),
-      subtitle: "آخر 7 أيام",
-    },
-    {
-      title: "أرباح اليوم",
-      value: todayProfit,
-      icon: <Clock className="h-5 w-5" />,
-      performance: getPerformance(todayProfit, 5000),
-      subtitle: "الصفقات المكتملة اليوم",
-    },
-  ];
+    return [
+      {
+        title: "إجمالي أرباح الموقع",
+        value: totalProfit,
+        icon: <DollarSign className="h-5 w-5" />,
+        performance: "excellent",
+        subtitle: "جميع الصفقات المسجلة",
+      },
+      {
+        title: "أرباح الشهر",
+        value: monthProfit,
+        icon: <Calendar className="h-5 w-5" />,
+        trend: monthProfit > 0 ? 12.5 : -5.2,
+        performance: getPerformance(monthProfit, 100000),
+        subtitle: "من أول الشهر حتى اليوم",
+      },
+      {
+        title: "أرباح الأسبوع",
+        value: weekProfit,
+        icon: <CalendarDays className="h-5 w-5" />,
+        trend: weekProfit > 15000 ? 8.3 : -5.2,
+        performance: getPerformance(weekProfit, 30000),
+        subtitle: "آخر 7 أيام",
+      },
+      {
+        title: "أرباح اليوم",
+        value: todayProfit,
+        icon: <Clock className="h-5 w-5" />,
+        performance: getPerformance(todayProfit, 5000),
+        subtitle: "الصفقات المكتملة اليوم",
+      },
+    ];
+  }, [transactions]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ar-EG", {
@@ -203,3 +206,5 @@ export function ProfitStatsCards({ transactions = [] }: ProfitStatsCardsProps) {
     </div>
   );
 }
+
+export const ProfitStatsCards = React.memo(ProfitStatsCardsComponent);

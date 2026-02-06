@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -140,7 +140,7 @@ interface ProfitLineChartProps {
 
 export function ProfitLineChart({ transactions = [] }: ProfitLineChartProps) {
   const [activeFilter, setActiveFilter] = useState(30);
-  const data = generateData(activeFilter, transactions);
+  const data = useMemo(() => generateData(activeFilter, transactions), [activeFilter, transactions]);
 
   return (
     <div className="card-glow rounded-2xl bg-card p-5 lg:p-6 border border-border shadow-lg">

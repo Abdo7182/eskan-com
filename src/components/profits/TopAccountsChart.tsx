@@ -1,3 +1,4 @@
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -104,7 +105,7 @@ const renderCustomizedLabel = ({
   );
 };
 
-export function TopAccountsChart() {
+function TopAccountsChartComponent() {
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -224,3 +225,5 @@ export function TopAccountsChart() {
     </div>
   );
 }
+
+export const TopAccountsChart = React.memo(TopAccountsChartComponent);
