@@ -25,7 +25,6 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   deleteNotification,
-  clearAllNotifications,
 } from "@/api";
 
 interface Notification {
@@ -169,28 +168,6 @@ const AdminNotifications = () => {
         description: "فشل حذف الإشعار",
         variant: "destructive",
       });
-    }
-  };
-
-  const handleClearAll = async () => {
-    if (window.confirm("هل تريد حذف جميع الإشعارات نهائياً؟")) {
-      try {
-        await clearAllNotifications();
-        setNotifications([]);
-        setPage(1);
-        setTotal(0);
-        toast({
-          title: "تم",
-          description: "تم حذف جميع الإشعارات",
-        });
-      } catch (error) {
-        console.error("Error clearing notifications:", error);
-        toast({
-          title: "خطأ",
-          description: "فشل حذف الإشعارات",
-          variant: "destructive",
-        });
-      }
     }
   };
 
@@ -347,7 +324,7 @@ const AdminNotifications = () => {
           <div className="space-y-3">
             <AnimatePresence>
               {filteredNotifications.map((notification, index) => {
-                const Icon = iconMap[notification.notification_type];
+                const Icon = iconMap[notification.notification_type] || Bell;
                 return (
                   <motion.div
                     key={notification.id}
@@ -365,7 +342,7 @@ const AdminNotifications = () => {
                         <div className="flex gap-3 md:gap-4">
                           {/* Icon */}
                           <div
-                            className={`h-10 w-10 md:h-12 md:w-12 rounded-lg flex items-center justify-center flex-shrink-0 ${colorMap[notification.notification_type]}`}
+                            className={`h-10 w-10 md:h-12 md:w-12 rounded-lg flex items-center justify-center flex-shrink-0 ${colorMap[notification.notification_type] || "bg-gray-500"}`}
                           >
                             <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
@@ -387,7 +364,7 @@ const AdminNotifications = () => {
                                 </p>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   <span
-                                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeColorMap[notification.notification_type]}`}
+                                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeColorMap[notification.notification_type] || "bg-gray-100 text-gray-800"}`}
                                   >
                                     {notification.notification_type_display}
                                   </span>
