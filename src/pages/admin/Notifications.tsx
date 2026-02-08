@@ -300,16 +300,6 @@ const AdminNotifications = () => {
                   تحديد الكل
                 </Button>
               )}
-              {notifications.length > 0 && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleClearAll}
-                >
-                  <Trash2 className="h-4 w-4 ml-1" />
-                  حذف
-                </Button>
-              )}
             </div>
           </div>
 
