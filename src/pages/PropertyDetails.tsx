@@ -558,3 +558,4 @@ const TrustItem = ({
 };
 
 export default PropertyDetails;
+ 
