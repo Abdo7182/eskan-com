@@ -621,13 +621,13 @@ const Index = () => {
               >
                 <Button
                   asChild
-                  size="lg"
-                  className="relative h-14 md:h-16 px-8 md:px-12 text-base md:text-lg rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 shadow-xl shadow-blue-400/30 gap-3 border border-blue-400/30 font-bold"
+                  size="md"
+                  className="relative h-11 md:h-12 px-6 md:px-8 text-sm md:text-base rounded-xl bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 hover:shadow-lg shadow-md transition-all duration-200 gap-2 font-semibold"
                 >
-                  <Link to="/properties" className="flex items-center gap-3">
-                    <Search className="h-5 w-5 md:h-6 md:w-6" />
+                  <Link to="/properties" className="flex items-center gap-2">
+                    <Search className="h-4 w-4 md:h-5 md:w-5" />
                     <span>تصفح العقارات</span>
-                    <ArrowLeft className="h-5 w-5 md:h-6 md:w-6" />
+                    <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
                   </Link>
                 </Button>
               </motion.div>
