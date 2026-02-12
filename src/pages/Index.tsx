@@ -433,20 +433,6 @@ const Index = () => {
         <motion.div className="absolute bottom-1/3 left-1/4 w-2 h-2 rounded-full bg-cyan-400 opacity-40" animate={{ y: [0, 20, 0] }} transition={{ duration: 8, repeat: Infinity, delay: 2 }} />
 
         {/* Additional Colorful Geometric Shapes */}
-        {/* Purple Circle - Bottom Right */}
-        <motion.div
-          className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-gradient-to-tr from-purple-100 to-purple-50 opacity-40"
-          animate={{
-            scale: [1, 1.05, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
         {/* Green Square - Top Left */}
         <motion.div
           className="absolute top-1/3 -left-8 w-40 h-40 rounded-3xl bg-gradient-to-br from-emerald-100/50 to-green-50/50 border border-emerald-200/30"
