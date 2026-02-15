@@ -126,7 +126,10 @@ const propertyMarketingSteps = [
 // Animated Building Component - Optimized with CSS
 const AnimatedBuilding = React.memo(({ className, delay = 0 }: { className?: string; delay?: number }) => {
   // Check system preferences for reduced motion
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Use ref to avoid re-checking on every render
+  const prefersReducedMotion = React.useMemo(() => 
+    typeof window !== 'undefined' ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  , []);
   
   return (
     <motion.div
@@ -176,7 +179,9 @@ const FloatingShape = React.memo(({
   duration?: number;
 }) => {
   // Check for reduced motion preference
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = React.useMemo(() => 
+    typeof window !== 'undefined' ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  , []);
   
   if (prefersReducedMotion) {
     return (
@@ -532,27 +537,27 @@ const Index = () => {
                 </motion.span>
 
             <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6"
               variants={fadeInUp}
             >
               اعثر على سكنك المثالي
               <br />
-                              <motion.span 
-                  className="text-primary inline-block"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{ duration: 5, repeat: Infinity }}
-                  style={{
-                    background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)))",
-                    backgroundSize: "200% auto",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  في الإسكندرية
-                </motion.span>
+              <motion.span 
+                className="text-primary inline-block"
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{ duration: 5, repeat: Infinity }}
+                style={{
+                  background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)))",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                في الإسكندرية
+              </motion.span>
 
             </motion.h1>
 
@@ -682,15 +687,14 @@ const Index = () => {
                 <motion.div
                   key={step.step}
                   className="relative pr-4 md:pr-0"
-                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   variants={fadeInUp}
                 >
-                  <div className={`bg-gradient-to-br from-white to-gray-50 rounded-xl lg:rounded-2xl p-4 lg:p-5 border border-gray-200 shadow-md hover:shadow-xl transition-all h-full group overflow-hidden relative flex items-start gap-3`}>
+                  <div className={`bg-gradient-to-br from-white to-gray-50 rounded-xl lg:rounded-2xl p-4 lg:p-5 border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300 h-full group overflow-hidden relative flex items-start gap-3`}>
                     {/* Background gradient accent */}
-                    <div className={`absolute top-0 right-0 w-20 h-20 ${bgColor} opacity-10 rounded-full -mr-10 -mt-10 transition-all duration-300 group-hover:scale-150`} />
+                    <div className={`absolute top-0 right-0 w-20 h-20 ${bgColor} opacity-10 rounded-full -mr-10 -mt-10`} />
                     
                     {/* Step Icon */}
-                    <div className={`flex w-12 h-12 rounded-lg ${bgColor} items-center justify-center shadow-lg text-white relative z-10 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                    <div className={`flex w-12 h-12 rounded-lg ${bgColor} items-center justify-center shadow-lg text-white relative z-10 transition-transform duration-300 group-hover:scale-110 flex-shrink-0`}>
                       <step.icon className="w-6 h-6" />
                     </div>
                     
@@ -704,9 +708,6 @@ const Index = () => {
                       <h3 className="text-base font-bold text-gray-900 mb-2 leading-tight">{step.title}</h3>
                       <p className="text-xs text-gray-600 leading-relaxed">{step.description}</p>
                     </div>
-                    
-                    {/* Hover CTA */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-blue-600/0 group-hover:from-blue-600/5 group-hover:to-blue-600/10 transition-all duration-300 rounded-xl" />
                   </div>
                 </motion.div>
                 );
@@ -723,13 +724,10 @@ const Index = () => {
             {/* Header with View All Button */}
             <motion.div
               className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 md:gap-6 mb-12"
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-              }}
+              transition={{ duration: 0.4 }}
             >
               <div className="text-center md:text-right flex-1">
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 px-4 py-2 rounded-full text-sm font-semibold mb-3">
@@ -770,25 +768,21 @@ const Index = () => {
             <div className="md:hidden overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
               <motion.div
                 className="flex gap-4"
-                initial="hidden"
-                whileInView="visible"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-                  },
+                transition={{
+                  staggerChildren: 0.08, delayChildren: 0.1
                 }}
               >
                 {featuredProperties.map((property) => (
                   <motion.div
                     key={property.id}
-                    className="flex-shrink-0 w-[85vw] max-w-[320px] will-change-transform"
-                    variants={{
-                      hidden: { opacity: 0, scale: 0.9 },
-                      visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
-                    }}
+                    className="flex-shrink-0 w-[85vw] max-w-[320px]"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3 }}
                   >
                     <PropertyCard property={property} />
                   </motion.div>
@@ -799,25 +793,20 @@ const Index = () => {
             {/* Desktop Grid */}
             <motion.div
               className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-                },
+              transition={{
+                staggerChildren: 0.08, delayChildren: 0.1
               }}
             >
               {featuredProperties.map((property) => (
                 <motion.div
                   key={property.id}
-                  className="will-change-transform"
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.9 },
-                    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
-                  }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3 }}
                 >
                   <PropertyCard property={property} variant="grid" />
                 </motion.div>
@@ -832,14 +821,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <motion.div
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-              }}
-              className="will-change-transform"
+              transition={{ duration: 0.4 }}
+              className=""
             >
               <span className="inline-flex items-center gap-2 text-primary text-sm font-medium mb-3">
                 <Award className="h-4 w-4" />
@@ -855,28 +841,26 @@ const Index = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {advantages.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    className="flex items-start gap-3 p-4 bg-accent/30 rounded-xl will-change-transform"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm">{item.title}</h4>
-                      <p className="text-xs text-muted-foreground">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </motion.div>
+              <motion.div
+                className="flex items-start gap-3 p-4 bg-accent/30 rounded-xl transition-all hover:bg-accent/50"
+                variants={{hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 }}}
+              >
+                <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">{item.title}</h4>
+                  <p className="text-xs text-muted-foreground">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
                 ))}
               </div>
             </motion.div>
 
             <motion.div
-              className="relative will-change-transform"
+              className="relative"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "0px 0px -100px 0px" }}
@@ -889,16 +873,12 @@ const Index = () => {
               <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 p-8 h-[300px] md:h-[400px] flex items-center justify-center">
                 
                 {/* Decorative Elements */}
-                <motion.div
+                <div
                   className="absolute top-0 right-0 w-48 h-48 rounded-full bg-gradient-to-br from-blue-200 to-blue-100 opacity-40"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 8, repeat: Infinity }}
                 />
                 
-                <motion.div
+                <div
                   className="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-gradient-to-tr from-cyan-200 to-cyan-100 opacity-30"
-                  animate={{ scale: [1, 0.9, 1] }}
-                  transition={{ duration: 10, repeat: Infinity, delay: 1 }}
                 />
                 
                 <motion.div
@@ -909,15 +889,11 @@ const Index = () => {
 
                 {/* Center Content */}
                 <div className="relative z-10 text-center">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                    className="mb-4"
-                  >
+                  <div className="mb-4">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg">
                       <Home className="h-8 w-8" />
                     </div>
-                  </motion.div>
+                  </div>
                   <div className="text-center max-w-xs">
                     <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">الإسكندرية</h3>
                     <p className="text-gray-600">
@@ -956,13 +932,13 @@ const Index = () => {
           ) : displayAreas.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              variants={staggerContainer}
+              transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
             >
               {displayAreas.map((area) => (
-                <motion.div key={area.id} variants={fadeInUp}>
+                <motion.div key={area.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3 }}>
                   <AreaCard area={{
                     id: area.id as number,
                     name: (area.name || area.title || "") as string,
